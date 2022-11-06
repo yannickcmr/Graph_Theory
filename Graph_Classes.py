@@ -165,6 +165,7 @@ class Tree(Super_Graph):
             print(f"Vertex {parent.id} not in Tree.")
             return None
     
+    "error when running (15,4), only adds 12 nodes."
     # create a random tree of size # max_vertices.
     def Randomize_Tree(self, max_vertices: int = 10, max_children: int = 2):
         vertices_append = [Node(i, children=[]) for i in range(0, max_vertices)]
@@ -233,4 +234,4 @@ if __name__ == "__main__":
     #test_tree.Rep_Attributes()
 
     test_tree_random = Tree("test randomize")
-    test_tree_random.Randomize_Tree(7, 2)
+    test_tree_random.Randomize_Tree(15, 4)

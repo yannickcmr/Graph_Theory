@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 import networkx as nx
-from itertools import combinations
+from itertools import combinations, chain
 import random as rd
 import numpy as np
 
@@ -164,8 +164,7 @@ class Tree(Super_Graph):
         else:
             print(f"Vertex {parent.id} not in Tree.")
             return None
-    
-    "error when running (15,4), only adds 12 nodes."
+
     # create a random tree of size # max_vertices.
     def Randomize_Tree(self, max_vertices: int = 10, max_children: int = 2):
         vertices_append = [Node(i, children=[]) for i in range(0, max_vertices)]
@@ -181,11 +180,13 @@ class Tree(Super_Graph):
 
         while len(vertices_append) > 0:
             # randomize the number of children.
-            rnd_children = rd.randint(1,max_children)
+            lower_bound = 0
+            if len(previous_children) < 2:
+                lower_bound = 1
+            rnd_children = rd.randint(lower_bound, max_children)
             if rnd_children < len(vertices_append):
                 # add children to the current vertex.
                 for i in range(0, rnd_children):
-                    print(f"--> {current_node.id} {vertices_append[0].id}")
                     self.Add_Leaf(current_node, vertices_append[0])
                     vertices_append.pop(0)
 
@@ -206,13 +207,49 @@ class Tree(Super_Graph):
                     self.Add_Leaf(current_node, item)
                 vertices_append = []
     
+    def Get_Levels(self):
+        result = [self.root, self.root.children]
+        queue = [*self.root.children]
+        while len(queue) > 0:
+            queue = [node.children for node in queue]
+            queue = list(chain(*queue))
+            result.append(queue)
+        return result[:-1]
+
     # to be added.
     def Get_Height(self):
-        pass
+        levels = self.Get_Levels()
+        return len(levels) -1
     
     # to be added.
+    "get spacing right and insert the branches."
     def Draw_Tree(self):
-        pass
+        x_levels = [0]
+        y_levels = [0]
+        labels = [self.root.id]
+        downwards = 0
+
+        levels = self.Get_Levels()
+        levels.pop(0)
+
+        for level in levels:
+            downwards -= 2
+            len_level = len(level)
+            for node in level:
+                x_levels.append(level.index(node) - len_level/2)
+                y_levels.append(downwards)
+                labels.append(node.id)
+        
+        fig, ax = plt.subplots()
+        ax.scatter(x_levels, y_levels)
+
+        for i in range(len(labels)):
+            ax.annotate(labels[i], (x_levels[i], y_levels[i]))
+        plt.show()
+
+
+
+        
 
 
 if __name__ == "__main__":
@@ -235,3 +272,5 @@ if __name__ == "__main__":
 
     test_tree_random = Tree("test randomize")
     test_tree_random.Randomize_Tree(15, 4)
+    test_tree_random.Rep_Attributes()
+    test_tree_random.Draw_Tree()

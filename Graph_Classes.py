@@ -26,4 +26,22 @@ class Node:
                 print(f"neighbour of {self.id}: {node.id}")
         return self.children
     
+class Edge:
+    def __init__(self, parent: Node, child: Node, direction: int = 0, weight: float = 0) -> None:
+        self.parent = parent
+        self.child = child 
+        self.direction = direction
+        self.weight = weight 
     
+    def add_neighbours(self):
+        self.parent.neighbours.append(self.child)
+        self.child.neighbours.append(self.parent)
+
+    def add_tree_relation(self):
+        self.parent.children.append(self.child)
+        self.child.parent = self.parent
+    
+    def return_attributes(self):
+        return [self.parent, self.child, self.weight, self.direction]
+
+
